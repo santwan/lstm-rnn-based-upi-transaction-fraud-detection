@@ -1,0 +1,91 @@
+{
+  "data_config": {
+    "seq_len": 20,
+    "num_features": 29,
+    "feature_columns": [
+      "amount",
+      "time_since_last_tx",
+      "amount_zscore",
+      "user_mean_amount",
+      "user_std_amount",
+      "tx_count_last_5min",
+      "tx_count_last_1hr",
+      "amount_ratio_prev",
+      "is_amount_spike",
+      "distance_from_prev_tx",
+      "is_location_jump",
+      "isp_changed",
+      "days_since_first_tx_with_receiver",
+      "latitude",
+      "longitude",
+      "hour",
+      "day_of_week",
+      "is_weekend",
+      "is_night",
+      "rolling_mean_amount",
+      "rolling_std_amount",
+      "amount_vs_personal_mean",
+      "user_tx_rank",
+      "transaction_type_enc",
+      "status_enc",
+      "sender_bank_enc",
+      "receiver_bank_enc",
+      "device_type_enc",
+      "merchant_category_enc"
+    ],
+    "label_column": "is_fraud",
+    "train_samples": 89533,
+    "val_samples": 15801,
+    "test_samples": 26334
+  },
+  "model_architecture": {
+    "type": "Simple RNN",
+    "layers": [
+      {
+        "name": "LSTM",
+        "units": 128,
+        "return_sequences": false
+      },
+      {
+        "name": "Dense",
+        "units": 32,
+        "activation": "relu"
+      },
+      {
+        "name": "Dropout",
+        "rate": 0.3
+      },
+      {
+        "name": "Dense",
+        "units": 1,
+        "activation": "sigmoid"
+      }
+    ],
+    "total_parameters": 26177
+  },
+  "training_config": {
+    "loss_function": "Binary Focal Loss",
+    "focal_gamma": 2.0,
+    "focal_alpha": 0.75,
+    "optimizer": "Adam",
+    "learning_rate": 0.0003,
+    "batch_size": 256,
+    "stratified_batching": true,
+    "fraud_per_batch": 38,
+    "legit_per_batch": 218,
+    "epochs": 50,
+    "early_stopping_patience": 10,
+    "initial_bias": -3.8502958994236938
+  },
+  "preprocessing": {
+    "categorical_encoding": "LabelEncoder",
+    "numeric_scaling": "StandardScaler (continuous features only)",
+    "binary_flags_preserved": [
+      "is_amount_spike",
+      "is_location_jump",
+      "is_weekend",
+      "is_night",
+      "isp_changed"
+    ]
+  }
+}
